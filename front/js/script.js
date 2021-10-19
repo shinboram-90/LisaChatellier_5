@@ -16,8 +16,7 @@ fetch(url).then((response) => {
   response.json().then((data) => {
     console.log(data);
     data.forEach((result) => {
-      console.log(result.name);
-      const products = `<a href=="./product.html?id=${result.id}">
+      const products = `<a href="./product.html?id=${result._id}">
         <article>
         <img src="${result.imageUrl}" alt="${result.altTxt}">
         <h3>${result.name}</h3>
