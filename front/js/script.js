@@ -1,7 +1,7 @@
 const url = "http://localhost:3000/api/products";
 
 // CREATING VARIABLES
-const ITEMS = document.querySelector("#items");
+const items = document.querySelector("#items");
 
 // const appendAnchorTag = () => {
 //   const anchor = document.createElement("a");
@@ -23,7 +23,7 @@ fetch(url).then((response) => {
         <p>${result.description}</p>
         </article>
       </a>`;
-      ITEMS.insertAdjacentHTML("beforeend", products);
+      items.insertAdjacentHTML("beforeend", products);
     });
   });
 });
