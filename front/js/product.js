@@ -1,13 +1,12 @@
-const url = "http://localhost:3000/api/products";
-const productId = new URLSearchParams(window.location.search).get("id");
-const productUrl = url + "/" + productId;
-
 function load() {
+  const url = "http://localhost:3000/api/products";
+  const productId = new URLSearchParams(window.location.search).get("id");
+  const productUrl = url + "/" + productId;
   fetch(productUrl).then((response) => {
     response
       .json()
       .then((data) => {
-        displayProduct(data);
+        displayProduct(data, productId);
       })
 
       .catch((e) => {
@@ -15,8 +14,9 @@ function load() {
       });
   });
 }
+// requete a l'api qui renvoit un JSON, exploite le json
 
-function displayProduct(data) {
+function displayProduct(data, productId) {
   // display image
   const img = document.createElement("img");
   img.setAttribute("src", data.imageUrl);
@@ -41,9 +41,19 @@ function displayProduct(data) {
     opt.textContent = colors[i];
     document.querySelector("#colors").appendChild(opt);
   }
+  bind(productId);
 }
 
-function addProduct() {
+// creer function bind
+function bind(productId) {
+  const btnAddToCart = document.querySelector("#addToCart");
+  btnAddToCart.addEventListener("click", (e) => {
+    e.preventDefault();
+    addProduct(productId);
+  });
+}
+
+function addProduct(productId) {
   // Initialise the cart, if we added products to the cart before then we use the existed one, otherwise we create an empty array
   let cart;
 
@@ -58,7 +68,6 @@ function addProduct() {
   const kanapName = document.getElementById("title").innerText;
   const kanapColor = document.getElementById("colors").value;
   const kanapQuantity = document.getElementById("quantity").value;
-  const kanapPrice = document.getElementById("price").innerText;
 
   // First of all check if selected quantity and color are correct!
   if (checkColor(kanapColor) && checkQuantity(kanapQuantity)) {
@@ -68,7 +77,6 @@ function addProduct() {
       name: kanapName,
       color: kanapColor,
       quantity: kanapQuantity,
-      price: kanapPrice,
     };
 
     // Need to check if we have this product in our cart or not
@@ -77,15 +85,14 @@ function addProduct() {
 
     // Return true, then have to retrieve existing kanap and increment the quantity qnd price
     if (itemsExist) {
-      const existingKanap = cart.find((elt) => elt.quantity && elt.price);
-      console.log(existingKanap.quantity);
-      console.log(existingKanap.price);
-      existingKanap.quantity =
-        parseInt(existingKanap.quantity) + parseInt(kanapQuantity);
-      existingKanap.price =
-        parseInt(existingKanap.price) + parseInt(kanapPrice);
-      console.log(existingKanap.quantity);
-      console.log(existingKanap.price);
+      //return index instead cart[itemsExist].quantity += parseInt(kanapProduct.quantity);
+      // pas besoin du prix uniquement id, couleur et qty
+      const exisitingKanap = cart[itemsExist];
+      console.log(`avant: ${exisitingKanap.quantity}`);
+      exisitingKanap.quantity =
+        parseInt(exisitingKanap.quantity) + parseInt(kanapProduct.quantity);
+
+      console.log(`apres: ${exisitingKanap.quantity}`);
 
       // No such items in cart, push the new kanap in the cart
     } else {
@@ -95,13 +102,15 @@ function addProduct() {
     alert(
       `You've just added ${kanapProduct.quantity} ${kanapProduct.name} in ${kanapProduct.color} to your shopping cart!`
     );
-    console.log(cart);
+    // console.log(cart);
+  } else {
+    alert("wrong qty and color");
   }
 }
 
 function checkQuantity(qty) {
   if (parseInt(qty) < 1 || parseInt(qty) > 100) {
-    alert("Please select a number between 1 and 100");
+    // alert("Please select a number between 1 and 100");
     return false;
   } else {
     return qty;
@@ -110,7 +119,8 @@ function checkQuantity(qty) {
 
 function checkColor(clr) {
   if (clr == "") {
-    alert("Please choose a color!");
+    // alert("Please choose a color!");
+    return false;
   } else {
     return clr;
   }
@@ -121,16 +131,17 @@ function alreadyInCart(cart, product) {
 
   cart.forEach((key, value) => {
     if (key._id == product._id && key.color == product.color) {
-      found = true;
+      found = value;
     }
   });
+
   return found;
 }
 
-const btnAddToCart = document.querySelector("#addToCart");
-btnAddToCart.addEventListener("click", (e) => {
-  e.preventDefault;
-  addProduct();
-});
+// const btnAddToCart = document.querySelector("#addToCart");
+// btnAddToCart.addEventListener("click", (e) => {
+//   e.preventDefault();
+//   addProduct();
+// });
 
 load();

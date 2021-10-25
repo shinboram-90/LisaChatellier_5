@@ -2,6 +2,7 @@ const cart = JSON.parse(localStorage.getItem("cart"));
 console.log(cart);
 
 // // code a moi
+
 // const url = "http://localhost:3000/api/products";
 // const DEBUG = true;
 // // REGEX
