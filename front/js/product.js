@@ -60,10 +60,10 @@ function addProduct() {
   const kanapQuantity = document.getElementById("quantity").value;
   const kanapPrice = document.getElementById("price").innerText;
 
-  // First of all check if selected quanrtity and color are correct!
+  // First of all check if selected quantity and color are correct!
   if (checkColor(kanapColor) && checkQuantity(kanapQuantity)) {
     // Building the object product
-    let product = {
+    const kanapProduct = {
       _id: productId,
       name: kanapName,
       color: kanapColor,
@@ -72,21 +72,30 @@ function addProduct() {
     };
 
     // Need to check if we have this product in our cart or not
-    let itemsExist = alreadyInCart(cart, product);
+    let itemsExist = alreadyInCart(cart, kanapProduct);
     console.log(itemsExist);
 
+    // Return true, then have to retrieve existing kanap and increment the quantity qnd price
     if (itemsExist) {
-      product.quantity = parseInt(product.quantity) + parseInt(kanapQuantity);
-      product.price = parseInt(product.price) + parseInt(kanapPrice);
-      console.log(product.quantity);
-      console.log(product.price);
+      const existingKanap = cart.find((elt) => elt.quantity && elt.price);
+      console.log(existingKanap.quantity);
+      console.log(existingKanap.price);
+      existingKanap.quantity =
+        parseInt(existingKanap.quantity) + parseInt(kanapQuantity);
+      existingKanap.price =
+        parseInt(existingKanap.price) + parseInt(kanapPrice);
+      console.log(existingKanap.quantity);
+      console.log(existingKanap.price);
+
+      // No such items in cart, push the new kanap in the cart
     } else {
-      cart.push(product);
+      cart.push(kanapProduct);
     }
     localStorage.setItem("cart", JSON.stringify(cart));
     alert(
-      `You've just added ${product.quantity} ${product.name} in ${product.color} to your shopping cart!`
+      `You've just added ${kanapProduct.quantity} ${kanapProduct.name} in ${kanapProduct.color} to your shopping cart!`
     );
+    console.log(cart);
   }
 }
 
