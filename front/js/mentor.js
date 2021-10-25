@@ -75,7 +75,7 @@
 // }
 
 // function add() {
-//   const quanty = getById("quantity").value;
+//   const quantity = getById("quantity").value;
 
 //   let selectOPt = getById("colors");
 //   const opt = selectOpt.options[selectOpt.selectedIndex].value;
@@ -94,58 +94,62 @@
 //   return false;
 // }
 
-// function checkSelected {
+// function checkSelected() {
 //   if (!selected) {
-//     alert('you must choose an option');
+//     alert("you must choose an option");
 //     return false;
 //   }
 //   return selected;
 // }
 
 // function checkQuant(quant) {
-//   if('undefined' === typedof(quant) || 0>=parseInt(quant) || 100 < parseInte(quant)) {
-//     alert('You must enter a valide number between 1 and 100');
+//   if (
+//     "undefined" === typedof(quant) ||
+//     0 >= parseInt(quant) ||
+//     100 < parseInte(quant)
+//   ) {
+//     alert("You must enter a valide number between 1 and 100");
 //     return false;
 //   }
 //   return quant;
 // }
 
 // function getValue() {
-//   const _ID = getById('hid').value;
-//   const selectOpt = getById('colors');
+//   const _ID = getById("hid").value;
+//   const selectOpt = getById("colors");
 //   const selected = selectOpt.options[selectOpt.selectedIndex].value;
-//   const quantities = getById('quantity').value;
+//   const quantities = getById("quantity").value;
 
 //   let prod = {
-//     _id : _ID,
-//     quantities : quantities,
-//     options: selected
+//     _id: _ID,
+//     quantities: quantities,
+//     options: selected,
 //   };
 
 //   return stockCart(prod);
 // }
 
-// function stockCart(prod);
-// logDebug(prod);
+// function stockCart(prod) {
+//   // logDebug(prod);
 
-// let cart;
-// if (!localStorage.getItem('userCart')){
-//   cart = [];
-//   cart.push(prod);
-// } else {
-//   cart = JSON.parse(localStorage.getItem('userCart'));
-//   let exists = alreadyInCart(cart, prod);
-
-//   if(false !== exists) {
-//     cart[exists].quantities+= parseInt(prod.quantities);
-//   } else {
+//   let cart;
+//   if (!localStorage.getItem("userCart")) {
+//     cart = [];
 //     cart.push(prod);
+//   } else {
+//     cart = JSON.parse(localStorage.getItem("userCart"));
+//     let exists = alreadyInCart(cart, prod);
+
+//     if (false !== exists) {
+//       cart[exists].quantities += parseInt(prod.quantities);
+//     } else {
+//       cart.push(prod);
+//     }
 //   }
+
+//   localStorage.setItem("userCart", JSON.stringify(cart));
 // }
-
-// localStorage.setItem('userCart', JSON.stringify(cart));
-
-// logDebug(cart);
+// // logDebug(cart);
 
 // return cart;
 
@@ -153,7 +157,7 @@
 //   let control = false;
 
 //   cart.forEach((elem, item) => {
-//     if(elem._id == prod._id && elem.options == prod.options) {
+//     if (elem._id == prod._id && elem.options == prod.options) {
 //       control = item;
 //     }
 //   });
@@ -162,39 +166,39 @@
 
 // // <-----------TOOLS ----------->
 
-// function displayAlarm(content, type) {
-// let box = createElem("p");
-// box.setAttribute("id", "alarm");
-// box.style.backgroundColor = type;
-// box.style.opactiy = 1;
-// box.style.textAlign = 'center';
-// box.textContent = content;
-// const but = getByClass('item__content__addButton')[0];
-// insertAfter(box, but);
-// const bat = getById('addToCart');
-// bat.disabled = false;
-// fade();
-// }
+// // function displayAlarm(content, type) {
+// //   let box = createElem("p");
+// //   box.setAttribute("id", "alarm");
+// //   box.style.backgroundColor = type;
+// //   box.style.opactiy = 1;
+// //   box.style.textAlign = "center";
+// //   box.textContent = content;
+// //   const but = getByClass("item__content__addButton")[0];
+// //   insertAfter(box, but);
+// //   const bat = getById("addToCart");
+// //   bat.disabled = false;
+// //   fade();
+// // }
 
-// function fade() {
-//   let box = getById("alarm");
-//   if (box.style.opacity > 0) {
-//     setTimeout(function () {
-//       box.style.opacity -= 0.1;
-//       fade();
-//     }, 200);
-//   } else {
-//     box.style.display = "none";
-//   }
-// }
+// // function fade() {
+// //   let box = getById("alarm");
+// //   if (box.style.opacity > 0) {
+// //     setTimeout(function () {
+// //       box.style.opacity -= 0.1;
+// //       fade();
+// //     }, 200);
+// //   } else {
+// //     box.style.display = "none";
+// //   }
+// // }
 
-// function logDebug(cont) {
-//   if (DEBUG) {
-//     if ("undefined" === typeof cont) {
-//       let cont = "UNDEFINED";
-//     }
-//     console.log(cont);
-//   }
-// }
+// // function logDebug(cont) {
+// //   if (DEBUG) {
+// //     if ("undefined" === typeof cont) {
+// //       let cont = "UNDEFINED";
+// //     }
+// //     console.log(cont);
+// //   }
+// // }
 
 // initPage();
