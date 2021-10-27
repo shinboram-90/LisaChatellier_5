@@ -93,7 +93,7 @@ function addProduct(productId) {
     console.log(itemsExist);
 
     // Return true, then have to retrieve existing kanap and increment the quantity qnd price
-    if (itemsExist) {
+    if (parseInt(itemsExist) >= 0) {
       //return index instead cart[itemsExist].quantity += parseInt(kanapProduct.quantity);
       // pas besoin du prix uniquement id, couleur et qty
       const exisitingKanap = cart[itemsExist];

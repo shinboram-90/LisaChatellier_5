@@ -26,7 +26,8 @@ cart.forEach((item) => {
   h2.innerText = item.name;
 
   const pPrice = document.createElement("p");
-  pPrice.innerText = `${item.price} €`;
+  let priceSameItems = parseInt(item.price) * parseInt(item.quantity);
+  pPrice.innerText = `${priceSameItems} €`;
 
   const pClr = document.createElement("p");
   pClr.innerText = item.color;
@@ -39,7 +40,7 @@ cart.forEach((item) => {
 
   const pQty = document.createElement("p");
   pQty.innerText = `Qté : ${item.quantity}`;
-  console.log(pQty);
+  // console.log(pQty);
 
   const input = document.createElement("input");
   input.className = "itemQuantity";
@@ -64,7 +65,6 @@ cart.forEach((item) => {
     const gdGdParent = gdParent.parentNode;
     const ancestor = gdGdParent.parentNode;
     console.log(ancestor);
-
     alert("You're about to delete this item completely");
   });
 
@@ -87,18 +87,14 @@ function total() {
     const quantityCalc = cart.reduce((a, b) => {
       return a + parseInt(b.quantity);
     }, 0);
-
-    const totalQuantity = (document.getElementById("totalQuantity").innerText =
-      quantityCalc);
+    document.getElementById("totalQuantity").innerText = quantityCalc;
 
     const priceCalc = cart.reduce((a, b) => {
-      return a + parseInt(b.price);
+      return a + parseInt(b.price) * b.quantity;
     }, 0);
-    const totalPrice = (document.getElementById("totalPrice").innerText =
-      priceCalc);
-    console.log(totalQuantity);
-    console.log(totalPrice);
+    document.getElementById("totalPrice").innerText = priceCalc;
   });
 }
 
 total();
+// localStorage.clear();
