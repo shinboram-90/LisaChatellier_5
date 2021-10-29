@@ -1,6 +1,6 @@
 // const url = "http://localhost:3000/api/products";
-cart = JSON.parse(localStorage.getItem("cart"));
-console.log(cart);
+let cart = JSON.parse(localStorage.getItem("cart"));
+// console.log(cart);
 
 cart.forEach((item) => {
   const article = document.createElement("article");
@@ -64,8 +64,8 @@ cart.forEach((item) => {
     const gdParent = parent.parentNode;
     const gdGdParent = gdParent.parentNode;
     const ancestor = gdGdParent.parentNode;
-    console.log(ancestor);
-    alert("You're about to delete this item completely");
+    // console.log(ancestor);
+    areYouSure(item);
   });
 
   //calling function when multiple children;
@@ -98,3 +98,20 @@ function total() {
 
 total();
 // localStorage.clear();
+// const areYouSure = (item) => {
+//   if (
+//     window.confirm(
+//       `Vous etes sur le point de supprimer ${item.quantity} ${item.name} de couleur ${item.color} de votre panier.`
+//     )
+//   ) {
+//     alert("L'article a ete supprime");
+//   } else {
+//     alert("Aucune modification n'a ete apportee");
+//   }
+// };
+
+const areYouSure = (item) => {
+  console.log(cart);
+  console.log(`ceci est un console log avec concatenation ${cart}`);
+  console.log(item);
+};
