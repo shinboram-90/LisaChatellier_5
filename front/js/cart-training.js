@@ -27,6 +27,7 @@ function load() {
       h2.innerText = item.name;
 
       const pPrice = document.createElement("p");
+      pPrice.id = "price";
       const priceSameItems = parseInt(item.price) * parseInt(item.quantity);
       pPrice.innerText = `${priceSameItems} €`;
 
@@ -40,7 +41,8 @@ function load() {
       quantityParent.className = "cart__item__content__settings__quantity";
 
       const pQty = document.createElement("p");
-      pQty.innerText = "Qté : ";
+      pQty.innerText = `Qté : ${item.quantity}`;
+      pQty.id = "quant";
 
       const input = document.createElement("input");
       input.className = "itemQuantity";
@@ -49,16 +51,12 @@ function load() {
       input.setAttribute("min", "1");
       input.setAttribute("max", "100");
       input.setAttribute("value", item.quantity);
-      input.setAttribute(
-        "oninput",
-        "updateQuantity(event, '${element.id}', '${element.color, cart}')"
-      );
-      // input.addEventListener("change", (e) => {
-      //   e.preventDefault();
+      input.addEventListener("change", (e) => {
+        e.preventDefault();
 
-      //   // Call the function updatedCart to modify the values
-      //   updateCart(item, e, cart);
-      // });
+        // Call the function updatedCart to modify the values
+        updateCart(item, e, cart);
+      });
 
       const deleteParent = document.createElement("div");
       deleteParent.className = "cart__item__content__settings__delete";
@@ -137,68 +135,53 @@ const areYouSure = (item, cart, ancestor) => {
   }
 };
 
-function updateQuantity(event, id, color, cart) {
-  // event.preventDefault();
-  console.log(id);
-  console.log(color);
-  console.log(cart);
-  const bufferIndex = cart.find((elt) => elt._id === id && elt.color === color);
+const updateCart = (item, e, cart) => {
+  const newValue = parseInt(e.currentTarget.value);
+  const quant = document.getElementById("quant");
+  const price = document.getElementById("price");
+  // console.log(e.target);
 
-  cart[bufferIndex].quantity = event.target.value;
+  console.log(typeof newValue);
 
-  localStorage.setItem("cart", JSON.stringify(cart));
+  if (newValue > 0 && newValue < 101) {
+    cart.forEach((key) => {
+      if (key._id === item._id && key.color === item.color) {
+        console.log("same");
+        item.quantity = newValue;
+        // // quant.innerText = `Qté : ${item.quantity}`;
+        // const newTotal = item.quantity * item.price;
+        // price.innerText = `${newTotal} €`;
+        displayProduct();
+        console.log(`new quantity: ${key.quantity}`);
+        console.log(`new price: ${key.price * key.quantity}`);
+        total(cart);
+        localStorage.setItem("cart", JSON.stringify(cart));
+      } else {
+        console.log("not the same");
+        console.log(`quantity: ${key.quantity}`);
+        console.log(`price: ${key.price}`);
+      }
+    });
 
-  total(cart);
-}
-
-// const updateCart = (item, e, cart) => {
-//   const newValue = parseInt(e.currentTarget.value);
-//   const quant = document.getElementById("quant");
-//   const price = document.getElementById("price");
-//   // console.log(e.target);
-
-//   console.log(typeof newValue);
-
-//   if (newValue > 0 && newValue < 101) {
-//     cart.forEach((key) => {
-//       if (key._id === item._id && key.color === item.color) {
-//         console.log("same");
-//         item.quantity = newValue;
-//         // // quant.innerText = `Qté : ${item.quantity}`;
-//         // const newTotal = item.quantity * item.price;
-//         // price.innerText = `${newTotal} €`;
-//         // displayProduct();
-//         localStorage.removeItem("cart");
-//         localStorage.setItem("cart", JSON.stringify(cart));
-//         total(cart);
-//         console.log(`new quantity: ${key.quantity}`);
-//         console.log(`new price: ${key.price * key.quantity}`);
-//       } else {
-//         console.log("not the same");
-//         console.log(`quantity: ${key.quantity}`);
-//         console.log(`price: ${key.price}`);
-//       }
-//     });
-
-//     alert(
-//       `You now have ${item.quantity} ${item.name} in ${item.color} colour\nTotal price: ${item.price}€ (for the selected item)`
-//     );
-//   } else {
-//     alert("Please select a number between 1 and 100");
-//   }
-// };
+    alert(
+      `You now have ${item.quantity} ${item.name} in ${item.color} colour\nTotal price: ${item.price}€ (for the selected item)`
+    );
+  } else {
+    alert("Please select a number between 1 and 100");
+  }
+};
 
 load();
 
-// const displayProduct = () => {
-// cart.forEach((item) => {
-//   const quant = document.getElementById("quant");
-//   quant.innerText = `Qté : ${item.quantity}`;
-//   const price = document.getElementById("price");
-//   price.innerText = `${item.price * item.quantity} €`;
-// });
-//   location.reload();
-// };
+const displayProduct = () => {
+  // cart.forEach((item) => {
+  //   const quant = document.getElementById("quant");
+  //   quant.innerText = `Qté : ${item.quantity}`;
+  //   const price = document.getElementById("price");
+  //   price.innerText = `${item.price * item.quantity} €`;
+  // });
+  location.reload();
+};
 // const displayQty = (key) => {
 //   const quant = document.querySelectorAll("#quant");
 //   quant.forEach((q) => {

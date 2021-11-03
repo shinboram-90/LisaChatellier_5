@@ -139,7 +139,7 @@ function alreadyInCart(cart, product) {
   let found = false;
 
   cart.forEach((key, value) => {
-    if (key._id == product._id && key.color == product.color) {
+    if (key._id === product._id && key.color === product.color) {
       found = value;
     }
   });
@@ -153,4 +153,5 @@ function alreadyInCart(cart, product) {
 //   addProduct();
 // });
 
+console.log(localStorage);
 load();
