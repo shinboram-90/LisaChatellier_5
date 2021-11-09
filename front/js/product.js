@@ -69,9 +69,9 @@ function addProduct(productId) {
   const kanapName = document.getElementById("title").innerText;
   const kanapColor = document.getElementById("colors").value;
   const kanapQuantity = document.getElementById("quantity").value;
-  const kanapPrice = document.getElementById("price").innerText;
-  const KanapImg = document.getElementById("imageUrl").getAttribute("src");
-  const kanapAlt = document.getElementById("imageUrl").getAttribute("alt");
+  // const kanapPrice = document.getElementById("price").innerText;
+  // const KanapImg = document.getElementById("imageUrl").getAttribute("src");
+  // const kanapAlt = document.getElementById("imageUrl").getAttribute("alt");
 
   // First of all check if selected quantity and color are correct!
   if (checkColor(kanapColor) && checkQuantity(kanapQuantity)) {
@@ -81,12 +81,10 @@ function addProduct(productId) {
       name: kanapName,
       color: kanapColor,
       quantity: kanapQuantity,
-      imageUrl: KanapImg,
-      price: kanapPrice,
-      altTxt: kanapAlt,
+      // imageUrl: KanapImg,
+      // price: kanapPrice,
+      // altTxt: kanapAlt,
     };
-
-    console.log(kanapAlt);
 
     // Need to check if we have this product in our cart or not
     let itemsExist = alreadyInCart(cart, kanapProduct);
