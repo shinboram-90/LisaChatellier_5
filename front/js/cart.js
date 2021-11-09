@@ -30,6 +30,11 @@ function displayLocalStorage(cart) {
           backProductInfos.quantity = item.quantity;
           mergedOptions.push(backProductInfos);
 
+          let neWcart = localStorage.setItem(
+            "cart",
+            JSON.stringify(mergedOptions)
+          );
+
           displayProduct(mergedOptions);
         })
 
@@ -42,6 +47,7 @@ function displayLocalStorage(cart) {
 }
 
 function displayProduct(mergedOptions) {
+  console.log(mergedOptions);
   mergedOptions.forEach((item) => {
     const article = document.createElement("article");
     document.querySelector("#cart__items").appendChild(article);
@@ -66,8 +72,7 @@ function displayProduct(mergedOptions) {
     h2.innerText = item.name;
 
     const pPrice = document.createElement("p");
-    let priceSameItems = parseInt(item.price) * parseInt(item.quantity);
-    pPrice.innerText = `${priceSameItems} €`;
+    pPrice.innerText = `${item.price} €`;
 
     const pClr = document.createElement("p");
     pClr.innerText = item.colors;
