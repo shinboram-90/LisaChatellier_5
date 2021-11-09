@@ -1,149 +1,203 @@
-function load(cart) {
-  cart = JSON.parse(localStorage.getItem("cart")) || [];
-  // console.log(cart);
+function load() {
+  // const url = "http://localhost:3000/api/products";
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("orderId") !== null) {
+    // division car renvoit sur le meme fichier
+    // si l'url contient, id de la commande
+    //getElementById orderId => text.content orderId
+    // on est dans la page confirmation
+  } else {
+    displayProduct();
+    // va aller chercher le LS
+  }
+  // const productUrl = url + "/" + productId;
 
+  // fetch(productUrl).then((response) => {
+  //   response
+  //     .json()
+  //     .then((data) => {
+  //       console.log(data);
+  //     })
+
+  //     .catch((error) => {
+  //       alert("Sth went wrong");
+  //       console.log(error);
+  //     });
+  // });
+}
+
+// function displayOptions() {
+//   cart = JSON.parse(localStorage.getItem("cart")) || [];
+//   console.log(cart);
+//   if (cart.length !== 0) {
+//     cart.forEach((option) => {});
+//     const color = option.color;
+//     const quantity = option.quantity;
+//     const lsId = option.id;
+//     console.log(color, quantity, lsId);
+//   }
+// }
+
+// // pr chaq article requete prod cart.forEach recup _id, etc...
+// //recup reponse.json alt description etc... ca ca vient du back !!!
+// // data.quantity data.color
+
+// //if confirm1
+// function displayProduct() {
+
+  cart = JSON.parse(localStorage.getItem("cart")) || [];
   if (cart.length !== 0) {
     cart.forEach((item) => {
-      const article = document.createElement("article");
-      document.querySelector("#cart__items").appendChild(article);
-      article.className = "cart__item";
-      article.setAttribute("data-id", item._id);
+  const article = document.createElement("article");
+  document.querySelector("#cart__items").appendChild(article);
+  article.className = "cart__item";
+  article.setAttribute("data-id", item.id);
 
-      const imgParent = document.createElement("div");
-      imgParent.className = "cart__item__img";
 
-      const image = document.createElement("img");
-      image.setAttribute("src", item.imageUrl);
-      image.setAttribute("alt", item.altTxt);
-      imgParent.appendChild(image);
 
-      const contentParent = document.createElement("div");
-      contentParent.className = "cart__item__content";
 
-      const priceParent = document.createElement("div");
-      priceParent.className = "cart__item__content__titlePrice";
 
-      const h2 = document.createElement("h2");
-      h2.innerText = item.name;
 
-      const pPrice = document.createElement("p");
-      let priceSameItems = parseInt(item.price) * parseInt(item.quantity);
-      pPrice.innerText = `${priceSameItems} €`;
+//   // const url = ` url + "/" + ${item._id}`;
 
-      const pClr = document.createElement("p");
-      pClr.innerText = item.color;
+//   !!! ici qu'on envoit au back 
+//   // ici faire un fetch async attend d'avoir la reponse, et continue le code;
+//   // .then
+//   // .then
 
-      const settingsParent = document.createElement("div");
-      settingsParent.className = "cart__item__content__settings";
+//   const imgParent = document.createElement("div");
+//   imgParent.className = "cart__item__img";
 
-      const quantityParent = document.createElement("div");
-      quantityParent.className = "cart__item__content__settings__quantity";
+//   const image = document.createElement("img");
+//   image.setAttribute("src", item.imageUrl);
+//   image.setAttribute("alt", item.altTxt);
+//   imgParent.appendChild(image);
 
-      const pQty = document.createElement("p");
-      pQty.innerText = `Qté : ${item.quantity}`;
-      // console.log(pQty);
+//   const contentParent = document.createElement("div");
+//   contentParent.className = "cart__item__content";
 
-      const input = document.createElement("input");
-      input.className = "itemQuantity";
-      input.setAttribute("type", "number");
-      input.setAttribute("name", "itemQuantity");
-      input.setAttribute("min", "1");
-      input.setAttribute("max", "100");
-      input.setAttribute("value", item.quantity);
-      input.addEventListener("change", (e) => {
-        e.preventDefault();
+//   const priceParent = document.createElement("div");
+//   priceParent.className = "cart__item__content__titlePrice";
 
-        updatedCart(item, e, cart);
-      });
+//   const h2 = document.createElement("h2");
+//   h2.innerText = item.name;
 
-      const deleteParent = document.createElement("div");
-      deleteParent.className = "cart__item__content__settings__delete";
+//   const pPrice = document.createElement("p");
+//   let priceSameItems = parseInt(item.price) * parseInt(item.quantity);
+//   pPrice.innerText = `${priceSameItems} €`;
 
-      const deleteItem = document.createElement("p");
-      deleteItem.className = "deleteItem";
-      deleteItem.innerText = "Supprimer";
-      deleteParent.appendChild(deleteItem);
+//   const pClr = document.createElement("p");
+//   pClr.innerText = item.color;
 
-      deleteItem.addEventListener("click", (e) => {
-        e.preventDefault();
-        // const elt = e.target;
-        // const ancestor = elt.closest("article");
-        areYouSure(item, cart);
-      });
+//   const settingsParent = document.createElement("div");
+//   settingsParent.className = "cart__item__content__settings";
 
-      //calling function when multiple children;
-      appendChildren(article, [imgParent, contentParent]);
-      appendChildren(contentParent, [priceParent, settingsParent]);
-      appendChildren(priceParent, [h2, pClr, pPrice]);
-      appendChildren(settingsParent, [quantityParent, deleteParent]);
-      appendChildren(quantityParent, [pQty, input]);
-    });
-  } else {
-    console.log("Your cart is empty");
-  }
-  total(cart);
-}
+//   const quantityParent = document.createElement("div");
+//   quantityParent.className = "cart__item__content__settings__quantity";
 
-function appendChildren(parent, children) {
-  children.forEach((child) => {
-    parent.appendChild(child);
-  });
-}
+//   const pQty = document.createElement("p");
+//   pQty.innerText = "Qté : ";
+//   // console.log(pQty);
 
-function total(cart) {
-  cart.forEach(() => {
-    const quantityCalc = cart.reduce((a, b) => {
-      return a + parseInt(b.quantity);
-    }, 0);
-    document.getElementById("totalQuantity").innerText = quantityCalc;
+//   const input = document.createElement("input");
+//   input.className = "itemQuantity";
+//   input.setAttribute("type", "number");
+//   input.setAttribute("name", "itemQuantity");
+//   input.setAttribute("min", "1");
+//   input.setAttribute("max", "100");
+//   input.setAttribute("value", item.quantity);
+//   input.addEventListener("change", (e) => {
+//     updatedCart(item, e, cart);
+//   });
 
-    const priceCalc = cart.reduce((a, b) => {
-      return a + parseInt(b.price) * b.quantity;
-    }, 0);
-    document.getElementById("totalPrice").innerText = priceCalc;
-  });
-}
+//   const deleteParent = document.createElement("div");
+//   deleteParent.className = "cart__item__content__settings__delete";
 
-// localStorage.clear();
+//   const deleteItem = document.createElement("p");
+//   deleteItem.className = "deleteItem";
+//   deleteItem.innerText = "Supprimer";
+//   deleteParent.appendChild(deleteItem);
 
-const areYouSure = (item, cart) => {
-  if (
-    window.confirm(
-      `Vous êtes sur le point de supprimer ${item.quantity} ${item.name} de couleur ${item.color} de votre panier.`
-    )
-  ) {
-    cart.forEach((key, value) => {
-      if (key._id === item._id && key.color === item.color) {
-        value = cart.indexOf(item);
-        cart.splice(value, 1);
-      } else {
-        console.log("Not the right item");
-      }
-      // ancestor.remove();
-      localStorage.setItem("cart", JSON.stringify(cart));
-    });
-    window.location.href = "cart.html";
-    alert("Article(s) supprimé(s) avec succès");
-  } else {
-    alert("Aucune modification n'a été apportée");
-  }
-};
+//   // deleteItem.addEventListener("click", (e) => {
+//   //   e.preventDefault();
+//   //   // const elt = e.target;
+//   //   // const ancestor = elt.closest("article");
+//   //   areYouSure(item, cart);
+//   // });
 
-const updatedCart = (item, e, cart) => {
-  const newValue = e.currentTarget.value;
-  if (newValue > 1 && newValue < 101) {
-    item.quantity = newValue;
-    // console.log(item.quantity);
-    // console.log(cart);
-    localStorage.setItem("cart", JSON.stringify(cart));
-    window.location.href = "cart.html";
-    const newTotal = item.quantity * item.price;
-    alert(
-      `You now have ${item.quantity} ${item.name}, total price: ${newTotal}€ (for the selected item)`
-    );
-  } else {
-    alert("Please select a number between 1 and 100");
-  }
-};
+//   //calling function when multiple children;
+//   appendChildren(article, [imgParent, contentParent]);
+//   appendChildren(contentParent, [priceParent, settingsParent]);
+//   appendChildren(priceParent, [h2, pClr, pPrice]);
+//   appendChildren(settingsParent, [quantityParent, deleteParent]);
+//   appendChildren(quantityParent, [pQty, input]);
+//   //   });
+//   // } else {
+//   console.log("Your cart is empty");
+// }
+// // total(cart);
+// // }
+
+// function appendChildren(parent, children) {
+//   children.forEach((child) => {
+//     parent.appendChild(child);
+//   });
+// }
+
+// function total(cart) {
+//   cart.forEach(() => {
+//     const quantityCalc = cart.reduce((a, b) => {
+//       return a + parseInt(b.quantity);
+//     }, 0);
+//     document.getElementById("totalQuantity").innerText = quantityCalc;
+
+//     const priceCalc = cart.reduce((a, b) => {
+//       return a + parseInt(b.price) * b.quantity;
+//     }, 0);
+//     document.getElementById("totalPrice").innerText = priceCalc;
+//   });
+// }
+
+// // localStorage.clear();
+
+// // const areYouSure = (item, cart) => {
+// //   if (
+// //     window.confirm(
+// //       `Vous êtes sur le point de supprimer ${item.quantity} ${item.name} de couleur ${item.color} de votre panier.`
+// //     )
+// //   ) {
+// //     cart.forEach((key, value) => {
+// //       if (key._id === item._id && key.color === item.color) {
+// //         value = cart.indexOf(item);
+// //         cart.splice(value, 1);
+// //       } else {
+// //         console.log("Not the right item");
+// //       }
+// //       // ancestor.remove();
+// //       localStorage.setItem("cart", JSON.stringify(cart));
+// //     });
+// //     window.location.href = "cart.html";
+// //     alert("Article(s) supprimé(s) avec succès");
+// //   } else {
+// //     alert("Aucune modification n'a été apportée");
+// //   }
+// // };
+
+// const updatedCart = (item, e, cart) => {
+//   const newValue = e.currentTarget.value;
+//   if (newValue > 1 && newValue < 101) {
+//     item.quantity = newValue;
+//     // console.log(item.quantity);
+//     // console.log(cart);
+//     localStorage.setItem("cart", JSON.stringify(cart));
+//     window.location.href = "cart.html";
+//     const newTotal = item.quantity * item.price;
+//     alert(
+//       `You now have ${item.quantity} ${item.name}, total price: ${newTotal}€ (for the selected item)`
+//     );
+//   } else {
+//     alert("Please select a number between 1 and 100");
+//   }
+// };
 
 load();

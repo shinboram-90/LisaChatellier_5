@@ -6,17 +6,18 @@ function load() {
     response
       .json()
       .then((data) => {
-        displayProduct(data, productId);
+        displayProduct(data);
       })
 
-      .catch((e) => {
+      .catch((error) => {
         alert("Sth went wrong");
+        console.log(error);
       });
   });
 }
 // requete a l'api qui renvoit un JSON, exploite le json
 
-function displayProduct(data, productId) {
+function displayProduct(data) {
   // display image
   const img = document.createElement("img");
   img.setAttribute("src", data.imageUrl);
@@ -42,14 +43,13 @@ function displayProduct(data, productId) {
     opt.textContent = colors[i];
     document.querySelector("#colors").appendChild(opt);
   }
-  bind(productId);
+  bindIt(data._id);
 }
 
 // creer function bind
-function bind(productId) {
+function bindIt(productId) {
   const btnAddToCart = document.querySelector("#addToCart");
   btnAddToCart.addEventListener("click", (e) => {
-    e.preventDefault();
     addProduct(productId);
   });
 }
