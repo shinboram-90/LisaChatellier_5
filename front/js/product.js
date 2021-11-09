@@ -6,17 +6,18 @@ function load() {
     response
       .json()
       .then((data) => {
-        displayProduct(data, productId);
+        displayProduct(data);
       })
 
-      .catch((e) => {
+      .catch((error) => {
         alert("Sth went wrong");
+        console.log(error);
       });
   });
 }
 // requete a l'api qui renvoit un JSON, exploite le json
 
-function displayProduct(data, productId) {
+function displayProduct(data) {
   // display image
   const img = document.createElement("img");
   img.setAttribute("src", data.imageUrl);
@@ -42,14 +43,13 @@ function displayProduct(data, productId) {
     opt.textContent = colors[i];
     document.querySelector("#colors").appendChild(opt);
   }
-  bind(productId);
+  bindIt(data._id);
 }
 
 // creer function bind
-function bind(productId) {
+function bindIt(productId) {
   const btnAddToCart = document.querySelector("#addToCart");
   btnAddToCart.addEventListener("click", (e) => {
-    e.preventDefault();
     addProduct(productId);
   });
 }
@@ -69,9 +69,9 @@ function addProduct(productId) {
   const kanapName = document.getElementById("title").innerText;
   const kanapColor = document.getElementById("colors").value;
   const kanapQuantity = document.getElementById("quantity").value;
-  const kanapPrice = document.getElementById("price").innerText;
-  const KanapImg = document.getElementById("imageUrl").getAttribute("src");
-  const kanapAlt = document.getElementById("imageUrl").getAttribute("alt");
+  // const kanapPrice = document.getElementById("price").innerText;
+  // const KanapImg = document.getElementById("imageUrl").getAttribute("src");
+  // const kanapAlt = document.getElementById("imageUrl").getAttribute("alt");
 
   // First of all check if selected quantity and color are correct!
   if (checkColor(kanapColor) && checkQuantity(kanapQuantity)) {
@@ -81,12 +81,10 @@ function addProduct(productId) {
       name: kanapName,
       color: kanapColor,
       quantity: kanapQuantity,
-      imageUrl: KanapImg,
-      price: kanapPrice,
-      altTxt: kanapAlt,
+      // imageUrl: KanapImg,
+      // price: kanapPrice,
+      // altTxt: kanapAlt,
     };
-
-    console.log(kanapAlt);
 
     // Need to check if we have this product in our cart or not
     let itemsExist = alreadyInCart(cart, kanapProduct);
