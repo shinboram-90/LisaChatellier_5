@@ -10,7 +10,6 @@ function load() {
       })
 
       .catch((error) => {
-        alert("Sth went wrong");
         console.log(error);
       });
   });
