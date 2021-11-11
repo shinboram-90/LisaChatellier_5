@@ -19,28 +19,27 @@ function load() {
 
 function displayLocalStorage(cart) {
   let mergedOptions = [];
-  let compteur = 0;
+  let counter = 0;
   cart.forEach((item) => {
     const productUrl = "http://localhost:3000/api/products" + "/" + item._id;
 
     fetch(productUrl).then((response) => {
-      response.json().then((backProductInfos) => {
-        backProductInfos.colors = item.color;
-        backProductInfos.quantity = item.quantity;
-        mergedOptions.push(backProductInfos);
-        compteur++;
-        // console.log(backProductInfos);
+      response
+        .json()
+        .then((backProductInfos) => {
+          backProductInfos.colors = item.color;
+          backProductInfos.quantity = item.quantity;
+          mergedOptions.push(backProductInfos);
+          counter++;
 
-        // localStorage.setItem("cart", JSON.stringify(mergedOptions));
-        if (compteur === cart.length) {
-          displayProduct(mergedOptions);
-        }
-      });
+          if (counter === cart.length) {
+            displayProduct(mergedOptions);
+          }
+        })
 
-      // .catch((error) => {
-      //   alert("Sth went wrong");
-      //   console.log(error);
-      // });
+        .catch((error) => {
+          console.log(error);
+        });
     });
   });
 }
@@ -75,8 +74,8 @@ function displayProduct(mergedOptions) {
       h2.innerText = item.name;
 
       const pPrice = document.createElement("p");
-      let priceSameItems = parseInt(item.price) * parseInt(item.quantity);
-      pPrice.innerText = `${priceSameItems} €`;
+      // let priceSameItems = parseInt(item.price) * parseInt(item.quantity);
+      pPrice.innerText = `${parseInt(item.price)} €`;
 
       const pClr = document.createElement("p");
       pClr.innerText = item.colors;
@@ -97,9 +96,9 @@ function displayProduct(mergedOptions) {
       input.setAttribute("min", "1");
       input.setAttribute("max", "100");
       input.setAttribute("value", item.quantity);
-      // input.addEventListener("change", (e) => {
-      //   updatedCart(item, e, mergedOptions);
-      // });
+      input.addEventListener("change", (e) => {
+        updatedCart(item, e, cart);
+      });
 
       const deleteParent = document.createElement("div");
       deleteParent.className = "cart__item__content__settings__delete";
@@ -109,11 +108,11 @@ function displayProduct(mergedOptions) {
       deleteItem.innerText = "Supprimer";
       deleteParent.appendChild(deleteItem);
 
-      // deleteItem.addEventListener("click", (e) => {
-      //   const elt = e.target;
-      //   const ancestor = elt.closest("article");
-      //   areYouSure(item, mergedOptions, ancestor);
-      // });
+      deleteItem.addEventListener("click", (e) => {
+        const elt = e.target;
+        const ancestor = elt.closest("article");
+        deleteKanap(item, cart, ancestor);
+      });
 
       //calling function when multiple children;
       appendChildren(article, [imgParent, contentParent]);
@@ -123,7 +122,7 @@ function displayProduct(mergedOptions) {
       appendChildren(quantityParent, [pQty, input]);
     });
   }
-  // total(mergedOptions);
+  total(cart);
 }
 // }
 
@@ -133,64 +132,63 @@ function appendChildren(parent, children) {
   });
 }
 
-// function total(mergedOptions) {
-//   const cart = mergedOptions;
-//   console.log({ cart });
-//   cart.forEach(() => {
-//     const quantityCalc = cart.reduce((a, b) => {
-//       return a + parseInt(b.quantity);
-//     }, 0);
-//     document.getElementById("totalQuantity").innerText = quantityCalc;
+function total(cart) {
+  cart.forEach(() => {
+    const quantityCalc = cart.reduce((a, b) => {
+      return a + parseInt(b.quantity);
+    }, 0);
+    document.getElementById("totalQuantity").innerText = quantityCalc;
 
-//     const priceCalc = cart.reduce((a, b) => {
-//       return a + parseInt(b.price) * b.quantity;
-//     }, 0);
-//     document.getElementById("totalPrice").innerText = priceCalc;
-//   });
-// }
+    const priceCalc = cart.reduce((a, b) => {
+      return a + parseInt(b.price) * b.quantity;
+    }, 0);
+    document.getElementById("totalPrice").innerText = priceCalc;
+  });
+}
 
 // localStorage.clear();
 
-// const areYouSure = (item, mergedOptions, ancestor) => {
-//   if (
-//     confirm(
-//       `Vous êtes sur le point de supprimer ${item.quantity} ${item.name} de couleur ${item.colors} de votre panier.`
-//     )
-//   ) {
-//     mergedOptions.forEach((key, value) => {
-//       if (key._id === item._id && key.colors === item.colors) {
-//         console.log(key.colors);
-//         value = mergedOptions.indexOf(item);
-//         mergedOptions.splice(value, 1);
-//       } else {
-//         console.log("Not the right item");
-//       }
-//       ancestor.remove();
-//       localStorage.setItem("cart", JSON.stringify(mergedOptions));
-//     });
+const deleteKanap = (item, cart, ancestor) => {
+  if (
+    confirm(
+      `Vous êtes sur le point de supprimer ${item.quantity} ${item.name} de couleur ${item.colors} de votre panier.`
+    )
+  ) {
+    cart.forEach((key, value) => {
+      if (key._id === item._id && key.colors === item.colors) {
+        console.log(key.colors);
+        value = cart.indexOf(item);
+        cart.splice(value, 1);
+      } else {
+        console.log("Not the right item");
+      }
+      ancestor.remove();
+      total(cart);
+      localStorage.setItem("cart", JSON.stringify(cart));
+    });
 
-//     alert("Article(s) supprimé(s) avec succès");
-//   } else {
-//     alert("Aucune modification n'a été apportée");
-//   }
-// };
+    alert("Article(s) supprimé(s) avec succès");
+  } else {
+    alert("Aucune modification n'a été apportée");
+  }
+};
 
-// const updatedCart = (item, e, mergedOptions) => {
-//   const newValue = e.currentTarget.value;
-//   if (newValue > 1 && newValue < 101) {
-//     item.quantity = newValue;
-//     // console.log(item.quantity);
-//     // console.log(cart);
-//     localStorage.setItem("cart", JSON.stringify(mergedOptions));
-//     total(mergedOptions);
+const updatedCart = (item, e, cart) => {
+  const newValue = e.currentTarget.value;
+  if (newValue >= 1 && newValue < 101) {
+    item.quantity = newValue;
+    // console.log(item.quantity);
+    // console.log(cart);
+    total(cart);
+    localStorage.setItem("cart", JSON.stringify(cart));
 
-//     const newTotal = item.quantity * item.price;
-//     alert(
-//       `You now have ${item.quantity} ${item.name}, total price: ${newTotal}€ (for the selected item)`
-//     );
-//   } else {
-//     alert("Please select a number between 1 and 100");
-//   }
-// };
+    const newTotal = item.quantity * item.price;
+    alert(
+      `You now have ${item.quantity} ${item.name}, in ${item.colors} colour\ntotal price: ${newTotal}€ (for the selected item)`
+    );
+  } else {
+    alert("Please select a number between 1 and 100");
+  }
+};
 
 load();
