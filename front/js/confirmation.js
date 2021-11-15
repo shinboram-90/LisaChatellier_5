@@ -3,7 +3,7 @@ function load() {
   const myOrderId = url.searchParams.get("orderId");
   const orderId = document.getElementById("orderId");
   orderId.innerText = myOrderId;
-  console.log(orderId);
+
   localStorage.clear();
 }
 load();

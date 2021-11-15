@@ -145,15 +145,14 @@ const deleteKanap = (item, cart, ancestor) => {
   ) {
     cart.forEach((key, value) => {
       if (key._id === item._id && key.colors === item.colors) {
-        console.log(key.colors);
         value = cart.indexOf(item);
         cart.splice(value, 1);
+        ancestor.remove();
       } else {
         console.log("Not the right item");
       }
-      ancestor.remove();
-      total(cart);
       localStorage.setItem("cart", JSON.stringify(cart));
+      total(cart);
     });
 
     alert("Article(s) supprimé(s) avec succès");
@@ -173,23 +172,26 @@ const updatedCart = (item, e, cart) => {
 
     const newTotal = item.quantity * item.price;
     alert(
-      `Vous avez désormais ${item.quantity} ${item.name}, de couleur ${item.colors}\nprix total: ${newTotal}€ (pour les articles modifiés)`
+      `Vous avez désormais ${item.quantity} ${item.name}, de couleur ${item.colors}\nPrix total: ${newTotal}€ (pour les articles modifiés)`
     );
   } else {
-    alert("Please select a number between 1 and 100");
+    alert("Veuillez choisir un nombre entre 1 et 100 !");
   }
 };
 
-//-------------------------------------------- regex --------------------------------------------
+//-------------------------------------------- REGEX --------------------------------------------
+
+const regexNames = /^(?=.{2,50}$)[a-z]+(?:['_.\s][a-z]+)*$/i;
+const regexAddress = /^[#.0-9a-zA-ZÀ-ÿ\s,-]{2,60}$/;
+const regexCity =
+  /^[a-zA-Z\u0080-\u024F]+(?:([\ \-\']|(\.\ ))[a-zA-Z\u0080-\u024F]+)*$/;
+const regexEmail = /^[^@\s]{2,30}@[^@\s]{2,30}\.[^@\s]{2,5}$/;
+
 function bindIt() {
   const submitForm = document.getElementById("order");
   submitForm.addEventListener("click", (e) => {
     e.preventDefault();
-    const regexNames = /^(?=.{2,50}$)[a-z]+(?:['_.\s][a-z]+)*$/i;
-    const regexAddress = /^[#.0-9a-zA-ZÀ-ÿ\s,-]{2,60}$/;
-    const regexCity =
-      /^[a-zA-Z\u0080-\u024F]+(?:([\ \-\']|(\.\ ))[a-zA-Z\u0080-\u024F]+)*$/;
-    const regexEmail = /^[^@\s]{2,30}@[^@\s]{2,30}\.[^@\s]{2,5}$/;
+
     //.form[0].value best practice
     const firstName = document.getElementById("firstName").value.toUpperCase();
     const lastName = document.getElementById("lastName").value.toUpperCase();
@@ -218,6 +220,10 @@ function bindIt() {
         email: email,
       };
       sendForm(contact);
+    } else {
+      alert(
+        "Certains champs sont manquants ou invalides, merci de compléter tout le formulaire."
+      );
     }
   });
 
@@ -233,7 +239,7 @@ function bindIt() {
   function errorMsg(userInput, error) {
     const neededInput = error.closest("div").firstElementChild.innerText;
     if (userInput !== true) {
-      error.innerText = `Ceci est un message d'erreur. ${neededInput} n'est pas valide`;
+      error.innerText = `Ceci est un message d'erreur. ${neededInput} n'est pas valide !`;
       return false;
     } else {
       return true;
@@ -261,11 +267,10 @@ function bindIt() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log({ data });
         window.location = `confirmation.html?orderId=${data.orderId}`;
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       });
   }
 }
