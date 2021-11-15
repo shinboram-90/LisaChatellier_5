@@ -191,4 +191,93 @@ const updatedCart = (item, e, cart) => {
   }
 };
 
+//-------------------------------------------- regex --------------------------------------------
+
+const submitForm = document.getElementById("order");
+submitForm.addEventListener("click", (e) => {
+  e.preventDefault();
+  const regexNames = /^(?=.{2,50}$)[a-z]+(?:['_.\s][a-z]+)*$/i;
+  const regexAddress = /^[#.0-9a-zA-ZÀ-ÿ\s,-]{2,60}$/;
+  const regexCity =
+    /^[a-zA-Z\u0080-\u024F]+(?:([\ \-\']|(\.\ ))[a-zA-Z\u0080-\u024F]+)*$/;
+  const regexEmail = /^[^@\s]{2,30}@[^@\s]{2,30}\.[^@\s]{2,5}$/;
+
+  const firstName = document.getElementById("firstName").value.toUpperCase();
+  const lastName = document.getElementById("lastName").value.toUpperCase();
+  const address = document.getElementById("address").value.toUpperCase();
+  const city = document.getElementById("city").value.toUpperCase();
+  const email = document.getElementById("email").value.toUpperCase();
+
+  const firstNameError = document.getElementById("firstNameErrorMsg");
+  const lastNameError = document.getElementById("lastNameErrorMsg");
+  const addressError = document.getElementById("addressErrorMsg");
+  const cityError = document.getElementById("cityErrorMsg");
+  const emailError = document.getElementById("emailErrorMsg");
+
+  if (
+    isValid(regexNames, firstName, firstNameError) &&
+    isValid(regexNames, lastName, lastNameError) &&
+    isValid(regexAddress, address, addressError) &&
+    isValid(regexCity, city, cityError) &&
+    isValid(regexEmail, email, emailError)
+  ) {
+    const contact = {
+      firstName: firstName,
+      lastName: lastName,
+      address: address,
+      city: city,
+      email: email,
+    };
+    sendForm(contact);
+  }
+});
+
+function isValid(regex, userInput, error) {
+  if (!regex.test(userInput.trim())) {
+    return errorMsg(userInput, error);
+  } else {
+    error.innerText = "";
+    return true;
+  }
+}
+
+function errorMsg(userInput, error) {
+  const neededInput = error.closest("div").firstElementChild.innerText;
+  if (userInput !== true) {
+    error.innerText = `Ceci est un message d'erreur. ${neededInput} n'est pas valide`;
+    return false;
+  } else {
+    return true;
+  }
+}
+
+function sendForm(contact) {
+  let products = [];
+
+  cart = JSON.parse(localStorage.getItem("cart"));
+
+  cart.forEach((kanap) => {
+    const productId = kanap._id;
+    products.push(productId);
+    console.log({ products });
+  });
+
+  fetch("http://localhost:3000/api/products/order", {
+    method: "POST",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ contact, products }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log({ data });
+      window.location.href = `confirmation.html?orderId=${data.orderId}`;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
+// localStorage.clear();
 load();
