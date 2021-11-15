@@ -48,7 +48,7 @@ function displayProduct(data) {
 // creer function bind
 function bindIt(productId) {
   const btnAddToCart = document.querySelector("#addToCart");
-  btnAddToCart.addEventListener("click", (e) => {
+  btnAddToCart.addEventListener("click", () => {
     addProduct(productId);
   });
 }
@@ -106,17 +106,18 @@ function addProduct(productId) {
     }
     localStorage.setItem("cart", JSON.stringify(cart));
     alert(
-      `You've just added ${kanapProduct.quantity} ${kanapProduct.name} in ${kanapProduct.color} to your shopping cart!`
+      `Vous venez d'ajouter ${kanapProduct.quantity} ${kanapProduct.name} de couleur ${kanapProduct.color} dans votre panier !`
     );
     console.log(cart);
-  } else {
-    alert("wrong qty and color");
   }
+  // else {
+  //   alert("wrong qty and color");
+  // }
 }
 
 function checkQuantity(qty) {
   if (parseInt(qty) < 1 || parseInt(qty) > 100) {
-    // alert("Please select a number between 1 and 100");
+    alert("Veuillez choisir un nombre entre 1 et 100 !");
     return false;
   } else {
     return qty;
@@ -125,7 +126,7 @@ function checkQuantity(qty) {
 
 function checkColor(clr) {
   if (clr == "") {
-    // alert("Please choose a color!");
+    alert("Veuillez choisir une couleur !");
     return false;
   } else {
     return clr;
@@ -143,11 +144,5 @@ function alreadyInCart(cart, product) {
 
   return found;
 }
-
-// const btnAddToCart = document.querySelector("#addToCart");
-// btnAddToCart.addEventListener("click", (e) => {
-//   e.preventDefault();
-//   addProduct();
-// });
 
 load();

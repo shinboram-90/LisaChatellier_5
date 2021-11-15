@@ -1,19 +1,9 @@
 function load() {
-  const param = new URLSearchParams(window.location.search);
-  if (param.get("orderId") !== null) {
-    const orderId = document.getElementById("orderId");
-    orderId.textContent = param.textContent("orderId");
-    // division car renvoit sur le meme fichier
-    // si l'url contient, id de la commande
-    //getElementById orderId => text.content orderId
-    // on est dans la page confirmation
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  if (cart.length === 0) {
+    console.log("Cart is empty");
   } else {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    if (cart.length === 0) {
-      console.log("Cart is empty");
-    } else {
-      displayLocalStorage(cart);
-    }
+    displayLocalStorage(cart);
   }
 }
 
@@ -38,7 +28,7 @@ function displayLocalStorage(cart) {
         })
 
         .catch((error) => {
-          console.log(error);
+          console.error(error);
         });
     });
   });
@@ -74,7 +64,6 @@ function displayProduct(mergedOptions) {
       h2.innerText = item.name;
 
       const pPrice = document.createElement("p");
-      // let priceSameItems = parseInt(item.price) * parseInt(item.quantity);
       pPrice.innerText = `${parseInt(item.price)} €`;
 
       const pClr = document.createElement("p");
@@ -121,6 +110,7 @@ function displayProduct(mergedOptions) {
       appendChildren(settingsParent, [quantityParent, deleteParent]);
       appendChildren(quantityParent, [pQty, input]);
     });
+    bindIt();
   }
   total(cart);
 }
@@ -137,6 +127,7 @@ function total(cart) {
     const quantityCalc = cart.reduce((a, b) => {
       return a + parseInt(b.quantity);
     }, 0);
+
     document.getElementById("totalQuantity").innerText = quantityCalc;
 
     const priceCalc = cart.reduce((a, b) => {
@@ -145,8 +136,6 @@ function total(cart) {
     document.getElementById("totalPrice").innerText = priceCalc;
   });
 }
-
-// localStorage.clear();
 
 const deleteKanap = (item, cart, ancestor) => {
   if (
@@ -177,14 +166,14 @@ const updatedCart = (item, e, cart) => {
   const newValue = e.currentTarget.value;
   if (newValue >= 1 && newValue < 101) {
     item.quantity = newValue;
-    // console.log(item.quantity);
-    // console.log(cart);
-    total(cart);
+
     localStorage.setItem("cart", JSON.stringify(cart));
+
+    total(cart);
 
     const newTotal = item.quantity * item.price;
     alert(
-      `You now have ${item.quantity} ${item.name}, in ${item.colors} colour\ntotal price: ${newTotal}€ (for the selected item)`
+      `Vous avez désormais ${item.quantity} ${item.name}, de couleur ${item.colors}\nprix total: ${newTotal}€ (pour les articles modifiés)`
     );
   } else {
     alert("Please select a number between 1 and 100");
@@ -192,92 +181,93 @@ const updatedCart = (item, e, cart) => {
 };
 
 //-------------------------------------------- regex --------------------------------------------
+function bindIt() {
+  const submitForm = document.getElementById("order");
+  submitForm.addEventListener("click", (e) => {
+    e.preventDefault();
+    const regexNames = /^(?=.{2,50}$)[a-z]+(?:['_.\s][a-z]+)*$/i;
+    const regexAddress = /^[#.0-9a-zA-ZÀ-ÿ\s,-]{2,60}$/;
+    const regexCity =
+      /^[a-zA-Z\u0080-\u024F]+(?:([\ \-\']|(\.\ ))[a-zA-Z\u0080-\u024F]+)*$/;
+    const regexEmail = /^[^@\s]{2,30}@[^@\s]{2,30}\.[^@\s]{2,5}$/;
+    //.form[0].value best practice
+    const firstName = document.getElementById("firstName").value.toUpperCase();
+    const lastName = document.getElementById("lastName").value.toUpperCase();
+    const address = document.getElementById("address").value.toUpperCase();
+    const city = document.getElementById("city").value.toUpperCase();
+    const email = document.getElementById("email").value.toUpperCase();
 
-const submitForm = document.getElementById("order");
-submitForm.addEventListener("click", (e) => {
-  e.preventDefault();
-  const regexNames = /^(?=.{2,50}$)[a-z]+(?:['_.\s][a-z]+)*$/i;
-  const regexAddress = /^[#.0-9a-zA-ZÀ-ÿ\s,-]{2,60}$/;
-  const regexCity =
-    /^[a-zA-Z\u0080-\u024F]+(?:([\ \-\']|(\.\ ))[a-zA-Z\u0080-\u024F]+)*$/;
-  const regexEmail = /^[^@\s]{2,30}@[^@\s]{2,30}\.[^@\s]{2,5}$/;
+    const firstNameError = document.getElementById("firstNameErrorMsg");
+    const lastNameError = document.getElementById("lastNameErrorMsg");
+    const addressError = document.getElementById("addressErrorMsg");
+    const cityError = document.getElementById("cityErrorMsg");
+    const emailError = document.getElementById("emailErrorMsg");
 
-  const firstName = document.getElementById("firstName").value.toUpperCase();
-  const lastName = document.getElementById("lastName").value.toUpperCase();
-  const address = document.getElementById("address").value.toUpperCase();
-  const city = document.getElementById("city").value.toUpperCase();
-  const email = document.getElementById("email").value.toUpperCase();
-
-  const firstNameError = document.getElementById("firstNameErrorMsg");
-  const lastNameError = document.getElementById("lastNameErrorMsg");
-  const addressError = document.getElementById("addressErrorMsg");
-  const cityError = document.getElementById("cityErrorMsg");
-  const emailError = document.getElementById("emailErrorMsg");
-
-  if (
-    isValid(regexNames, firstName, firstNameError) &&
-    isValid(regexNames, lastName, lastNameError) &&
-    isValid(regexAddress, address, addressError) &&
-    isValid(regexCity, city, cityError) &&
-    isValid(regexEmail, email, emailError)
-  ) {
-    const contact = {
-      firstName: firstName,
-      lastName: lastName,
-      address: address,
-      city: city,
-      email: email,
-    };
-    sendForm(contact);
-  }
-});
-
-function isValid(regex, userInput, error) {
-  if (!regex.test(userInput.trim())) {
-    return errorMsg(userInput, error);
-  } else {
-    error.innerText = "";
-    return true;
-  }
-}
-
-function errorMsg(userInput, error) {
-  const neededInput = error.closest("div").firstElementChild.innerText;
-  if (userInput !== true) {
-    error.innerText = `Ceci est un message d'erreur. ${neededInput} n'est pas valide`;
-    return false;
-  } else {
-    return true;
-  }
-}
-
-function sendForm(contact) {
-  let products = [];
-
-  cart = JSON.parse(localStorage.getItem("cart"));
-
-  cart.forEach((kanap) => {
-    const productId = kanap._id;
-    products.push(productId);
-    console.log({ products });
+    if (
+      isValid(regexNames, firstName, firstNameError) &&
+      isValid(regexNames, lastName, lastNameError) &&
+      isValid(regexAddress, address, addressError) &&
+      isValid(regexCity, city, cityError) &&
+      isValid(regexEmail, email, emailError)
+    ) {
+      const contact = {
+        firstName: firstName,
+        lastName: lastName,
+        address: address,
+        city: city,
+        email: email,
+      };
+      sendForm(contact);
+    }
   });
 
-  fetch("http://localhost:3000/api/products/order", {
-    method: "POST",
-    headers: {
-      "Accept": "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ contact, products }),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      console.log({ data });
-      window.location.href = `confirmation.html?orderId=${data.orderId}`;
-    })
-    .catch((error) => {
-      console.log(error);
+  function isValid(regex, userInput, error) {
+    if (!regex.test(userInput.trim())) {
+      return errorMsg(userInput, error);
+    } else {
+      error.innerText = "";
+      return true;
+    }
+  }
+
+  function errorMsg(userInput, error) {
+    const neededInput = error.closest("div").firstElementChild.innerText;
+    if (userInput !== true) {
+      error.innerText = `Ceci est un message d'erreur. ${neededInput} n'est pas valide`;
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  function sendForm(contact) {
+    let products = [];
+
+    cart = JSON.parse(localStorage.getItem("cart"));
+
+    cart.forEach((kanap) => {
+      const productId = kanap._id;
+      products.push(productId);
+      console.log({ products });
     });
+
+    fetch("http://localhost:3000/api/products/order", {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ contact, products }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log({ data });
+        window.location = `confirmation.html?orderId=${data.orderId}`;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 }
-// localStorage.clear();
+
 load();

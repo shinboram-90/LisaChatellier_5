@@ -1,11 +1,9 @@
-const url = new URL(window.location.href);
-
-console.log(url);
-
-const myOrderId = url.searchParams.get("orderId");
-console.log(myOrderId);
-
-const orderId = document.getElementById("orderId");
-orderId.innerText = myOrderId;
-
-// localStorage.clear();
+function load() {
+  const url = new URL(window.location.href);
+  const myOrderId = url.searchParams.get("orderId");
+  const orderId = document.getElementById("orderId");
+  orderId.innerText = myOrderId;
+  console.log(orderId);
+  localStorage.clear();
+}
+load();
