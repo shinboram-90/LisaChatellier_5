@@ -1,9 +1,20 @@
 function load() {
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
-  if (cart.length === 0) {
-    console.log("Cart is empty");
+  if (cartIsEmpty(cart)) {
   } else {
     displayLocalStorage(cart);
+  }
+}
+
+function cartIsEmpty(cart) {
+  if (cart.length === 0) {
+    const h1 = document.getElementsByTagName("h1");
+    h1[0].innerText = "Votre panier est vide";
+    const totalQuantity = document.getElementById("totalQuantity");
+    const noArticle = totalQuantity.closest("p");
+    noArticle.innerText = "Total (0 article) : 0 €";
+  } else {
+    return false;
   }
 }
 
@@ -36,8 +47,7 @@ function displayLocalStorage(cart) {
 
 function displayProduct(mergedOptions) {
   cart = mergedOptions;
-  if (cart.length === 0) {
-    console.log("Cart is empty");
+  if (cartIsEmpty(cart)) {
   } else {
     console.log({ cart });
     cart.forEach((item) => {
@@ -135,6 +145,7 @@ function total(cart) {
     }, 0);
     document.getElementById("totalPrice").innerText = priceCalc;
   });
+  cartIsEmpty(cart);
 }
 
 const deleteKanap = (item, cart, ancestor) => {
@@ -147,12 +158,12 @@ const deleteKanap = (item, cart, ancestor) => {
       if (key._id === item._id && key.colors === item.colors) {
         value = cart.indexOf(item);
         cart.splice(value, 1);
+        total(cart);
         ancestor.remove();
       } else {
         console.log("Not the right item");
       }
       localStorage.setItem("cart", JSON.stringify(cart));
-      total(cart);
     });
 
     alert("Article(s) supprimé(s) avec succès");
@@ -192,7 +203,6 @@ function bindIt() {
   submitForm.addEventListener("click", (e) => {
     e.preventDefault();
 
-    //.form[0].value best practice
     const firstName = document.getElementById("firstName").value.toUpperCase();
     const lastName = document.getElementById("lastName").value.toUpperCase();
     const address = document.getElementById("address").value.toUpperCase();
@@ -222,7 +232,7 @@ function bindIt() {
       sendForm(contact);
     } else {
       alert(
-        "Certains champs sont manquants ou invalides, merci de compléter tout le formulaire."
+        "Certains champs sont manquants ou invalides, merci de compléter et vérifier tout le formulaire."
       );
     }
   });
