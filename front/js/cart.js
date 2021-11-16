@@ -226,53 +226,53 @@ function bindIt() {
       );
     }
   });
+}
 
-  function isValid(regex, userInput, error) {
-    if (!regex.test(userInput.trim())) {
-      return errorMsg(userInput, error);
-    } else {
-      error.innerText = "";
-      return true;
-    }
+function isValid(regex, userInput, error) {
+  if (!regex.test(userInput.trim())) {
+    return errorMsg(userInput, error);
+  } else {
+    error.innerText = "";
+    return true;
   }
+}
 
-  function errorMsg(userInput, error) {
-    const neededInput = error.closest("div").firstElementChild.innerText;
-    if (userInput !== true) {
-      error.innerText = `Ceci est un message d'erreur. ${neededInput} n'est pas valide !`;
-      return false;
-    } else {
-      return true;
-    }
+function errorMsg(userInput, error) {
+  const neededInput = error.closest("div").firstElementChild.innerText;
+  if (userInput !== true) {
+    error.innerText = `Ceci est un message d'erreur. ${neededInput} n'est pas valide !`;
+    return false;
+  } else {
+    return true;
   }
+}
 
-  function sendForm(contact) {
-    let products = [];
+function sendForm(contact) {
+  let products = [];
 
-    cart = JSON.parse(localStorage.getItem("cart"));
+  cart = JSON.parse(localStorage.getItem("cart"));
 
-    cart.forEach((kanap) => {
-      const productId = kanap._id;
-      products.push(productId);
-      console.log({ products });
-    });
+  cart.forEach((kanap) => {
+    const productId = kanap._id;
+    products.push(productId);
+    console.log({ products });
+  });
 
-    fetch("http://localhost:3000/api/products/order", {
-      method: "POST",
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ contact, products }),
+  fetch("http://localhost:3000/api/products/order", {
+    method: "POST",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ contact, products }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      window.location = `confirmation.html?orderId=${data.orderId}`;
     })
-      .then((res) => res.json())
-      .then((data) => {
-        window.location = `confirmation.html?orderId=${data.orderId}`;
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }
+    .catch((error) => {
+      console.error(error);
+    });
 }
 
 load();
