@@ -1,3 +1,5 @@
+// send request using fetch API
+// this time the url contains an ID
 function load() {
   const url = "http://localhost:3000/api/products";
   const productId = new URLSearchParams(window.location.search).get("id");
@@ -10,12 +12,21 @@ function load() {
       })
 
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       });
   });
 }
-// requete a l'api qui renvoit un JSON, exploite le json
 
+/**
+ * Display all details of one product called data
+ * @param { Object } data
+ * @param { String } data.imageUrl
+ * @param { String } data.altTxt
+ * @param { String } data.name
+ * @param { Integer } data.price
+ * @param { String } data.description
+ * @param { Array.<String> } data.colors
+ */
 function displayProduct(data) {
   // display image
   const img = document.createElement("img");
@@ -45,7 +56,10 @@ function displayProduct(data) {
   bindIt(data._id);
 }
 
-// creer function bind
+/**
+ * On click, calling the function addProduct
+ * @param { string } productId
+ */
 function bindIt(productId) {
   const btnAddToCart = document.querySelector("#addToCart");
   btnAddToCart.addEventListener("click", () => {
@@ -53,6 +67,10 @@ function bindIt(productId) {
   });
 }
 
+/**
+ * Adding the product to the cart
+ * @param { string } productId
+ */
 function addProduct(productId) {
   // Initialise the cart, if we added products to the cart before then we use the existed one, otherwise we create an empty array
   let cart;
@@ -69,7 +87,7 @@ function addProduct(productId) {
   const kanapColor = document.getElementById("colors").value;
   const kanapQuantity = document.getElementById("quantity").value;
 
-  // First of all check if selected quantity and color are correct!
+  // First of all check if selected quantity and color are correct
   if (checkColor(kanapColor) && checkQuantity(kanapQuantity)) {
     // Building the object product
     const kanapProduct = {
@@ -83,10 +101,9 @@ function addProduct(productId) {
     let itemsExist = alreadyInCart(cart, kanapProduct);
     console.log({ itemsExist });
 
-    // Return true, then have to retrieve existing kanap and increment the quantity qnd price
+    // Return index, then have to retrieve existing kanap and increment the quantity and price
+    // Carefull index could be 0 so need to sepcify it otherwise will be read as false
     if (parseInt(itemsExist) >= 0) {
-      //return index instead cart[itemsExist].quantity += parseInt(kanapProduct.quantity);
-      // pas besoin du prix uniquement id, couleur et qty
       const exisitingKanap = cart[itemsExist];
       console.log(`before: ${exisitingKanap.quantity} quant`);
 
@@ -106,6 +123,11 @@ function addProduct(productId) {
   }
 }
 
+/**
+ * Check if the quantity is correct
+ * @param { String } qty
+ * @return { (false | qty) }
+ */
 function checkQuantity(qty) {
   if (parseInt(qty) < 1 || parseInt(qty) > 100) {
     alert("Veuillez choisir un nombre entre 1 et 100 !");
@@ -115,6 +137,11 @@ function checkQuantity(qty) {
   }
 }
 
+/**
+ * Check if a color is selected
+ * @param { String } clr
+ * @return { (false | clr) }
+ */
 function checkColor(clr) {
   if (clr == "") {
     alert("Veuillez choisir une couleur !");
@@ -124,6 +151,12 @@ function checkColor(clr) {
   }
 }
 
+/**
+ * Check if the product has already been added to the cart
+ * @param { Object[] } cart
+ * @param { Object } product
+ * @return { (false | Integer) }
+ */
 function alreadyInCart(cart, product) {
   let found = false;
 

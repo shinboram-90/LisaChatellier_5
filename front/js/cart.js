@@ -1,3 +1,4 @@
+// Affiche le panier vide ou plein grace au localstorage
 function load() {
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
   if (cartIsEmpty(cart)) {
@@ -6,6 +7,10 @@ function load() {
   }
 }
 
+/**
+ * Check if the cart is empty
+ * @param { Object[] } cart
+ */
 function cartIsEmpty(cart) {
   if (cart.length === 0) {
     const h1 = document.getElementsByTagName("h1");
@@ -18,12 +23,18 @@ function cartIsEmpty(cart) {
   }
 }
 
+/**
+ * Working with 2 arrays of ojects, one coming frome the API and the other one from the localStorage
+ * The idea is to replace the color and quantity values chosen by the user
+ * @param { Object[] } cart
+ */
 function displayLocalStorage(cart) {
   let mergedOptions = [];
   let counter = 0;
   cart.forEach((item) => {
     const productUrl = "http://localhost:3000/api/products" + "/" + item._id;
 
+    // send request using fetch API to replace values of color and quantity
     fetch(productUrl).then((response) => {
       response
         .json()
@@ -33,6 +44,7 @@ function displayLocalStorage(cart) {
           mergedOptions.push(backProductInfos);
           counter++;
 
+          // will call displayProduct when all products are read once
           if (counter === cart.length) {
             displayProduct(mergedOptions);
           }
@@ -45,11 +57,14 @@ function displayLocalStorage(cart) {
   });
 }
 
+/**
+ * Display all the products added to the cart earlier
+ * @param { Object[] } mergedOptions
+ */
 function displayProduct(mergedOptions) {
   cart = mergedOptions;
   if (cartIsEmpty(cart)) {
   } else {
-    console.log({ cart });
     cart.forEach((item) => {
       const article = document.createElement("article");
       document.querySelector("#cart__items").appendChild(article);
@@ -124,14 +139,22 @@ function displayProduct(mergedOptions) {
   }
   total(cart);
 }
-// }
 
+/**
+ * Append multiple elements to a parent element
+ * @param { HTMLElement } parent
+ * @param { HTMLElement[] } children
+ */
 function appendChildren(parent, children) {
   children.forEach((child) => {
     parent.appendChild(child);
   });
 }
 
+/**
+ * Append display the total quantity and price
+ * @param { Object[] } cart
+ */
 function total(cart) {
   cart.forEach(() => {
     const quantityCalc = cart.reduce((a, b) => {
@@ -148,6 +171,12 @@ function total(cart) {
   cartIsEmpty(cart);
 }
 
+/**
+ * Delete a product with same id and color
+ * @param { Object } item
+ * @param { Object[] } cart
+ * @param { HTMLElement } ancestor
+ */
 const deleteKanap = (item, cart, ancestor) => {
   if (
     confirm(
@@ -172,18 +201,26 @@ const deleteKanap = (item, cart, ancestor) => {
   }
 };
 
+/**
+ * Update the quantity and price when quantity is changed by the user
+ * @param { Object } item
+ * @param { Object } e
+ * @param { Object[] } cart
+ */
 const updatedCart = (item, e, cart) => {
   const newValue = e.currentTarget.value;
   if (newValue >= 1 && newValue < 101) {
     item.quantity = newValue;
-
     localStorage.setItem("cart", JSON.stringify(cart));
 
     total(cart);
 
-    const newTotal = item.quantity * item.price;
     alert(
-      `Vous avez désormais ${item.quantity} ${item.name}, de couleur ${item.colors}\nPrix total: ${newTotal}€ (pour les articles modifiés)`
+      `Vous avez désormais ${item.quantity} ${item.name}, de couleur ${
+        item.colors
+      }\nPrix total: ${
+        item.quantity * item.price
+      }€ (pour les articles modifiés)`
     );
   } else {
     alert("Veuillez choisir un nombre entre 1 et 100 !");
@@ -198,6 +235,10 @@ const regexCity =
   /^[a-zA-Z\u0080-\u024F]+(?:([\ \-\']|(\.\ ))[a-zA-Z\u0080-\u024F]+)*$/;
 const regexEmail = /^[^@\s]{2,30}@[^@\s]{2,30}\.[^@\s]{2,5}$/;
 
+/**
+ * On click, will  call function isValid and create an object contact if true
+ * Calling function sendform which contains user's info
+ */
 function bindIt() {
   const submitForm = document.getElementById("order");
   submitForm.addEventListener("click", (e) => {
@@ -238,6 +279,13 @@ function bindIt() {
   });
 }
 
+/**
+ * Checking if user input matches the regex
+ * @param { Object } regex
+ * @param { string } userInput
+ * @param { HTMLElement } error
+ * @return { (true | function errorMsg) }
+ */
 function isValid(regex, userInput, error) {
   if (!regex.test(userInput.trim())) {
     return errorMsg(userInput, error);
@@ -247,6 +295,12 @@ function isValid(regex, userInput, error) {
   }
 }
 
+/**
+ * Showing error msg to the user
+ * @param { string } userInput
+ * @param { HTMLElement } error
+ * @return { (true | false) }
+ */
 function errorMsg(userInput, error) {
   const neededInput = error.closest("div").firstElementChild.innerText;
   if (userInput !== true) {
@@ -257,6 +311,10 @@ function errorMsg(userInput, error) {
   }
 }
 
+/**
+ * Sends a request to the specified url from a form containing the user's contact info
+ * @param { Object } contact
+ */
 function sendForm(contact) {
   let products = [];
 
@@ -265,7 +323,6 @@ function sendForm(contact) {
   cart.forEach((kanap) => {
     const productId = kanap._id;
     products.push(productId);
-    console.log({ products });
   });
 
   fetch("http://localhost:3000/api/products/order", {
